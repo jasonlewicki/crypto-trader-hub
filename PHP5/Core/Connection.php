@@ -4,7 +4,7 @@ namespace CryptoTraderHub\Core;
 
 class Connection {
 	
-    public static function request($url, $method, $data){
+    public static function request($url, $method, $data, $options = Array()){
 
 		// Attempt to contact server (3 times max);
 		$tries  =   0;
@@ -31,6 +31,11 @@ class Connection {
 					curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $postfields);
 					break;
 			}	
+			
+			// cURL options
+			foreach($options as $key => $value){
+				curl_setopt($curl_handle, constant($key), $value);
+			}
 						
 			// Send Request
 			curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, true);    

@@ -17,12 +17,13 @@ class Bitcoincharts implements \CryptoTraderHub\DataServices\DataService{
 		$this->api_secret 	= $settings['api_secret'];
 	}
 	
-	/* You can use this to price goods and services in Bitcoins. 
+	/* 
+	 * You can use this to price goods and services in Bitcoins. 
 	 * This will yield much lower fluctuations than using a single market's latest price.
 	 * Weighted prices are calculated for the last 24 hours, 7 days and 30 days. If 
 	 * there are no trades during an interval (like no trade within 24 hours) no value will 
 	 * be returned. Prepare your code to handle this cases!	The returned JSON is dictionary
-	 * with elements for each currency. Each currency has up to three key-value pairs: 24h, 7d and 30d.
+	 * with elements for each currency. Each currency has up to three key-value pairs: 24h, 7d and 30d. 
 	*/
 	public function weightedPrices(){	
 		
@@ -57,7 +58,8 @@ class Bitcoincharts implements \CryptoTraderHub\DataServices\DataService{
 		return \CryptoTraderHub\Core\Connection::request($url, $method, $data);
 	}		
 
-	/* Trade data is available as CSV, delayed by approx. 15 minutes. It will return the 2000 most recent trades.
+	/* 
+	 * Trade data is available as CSV, delayed by approx. 15 minutes. It will return the 2000 most recent trades.
 	 * http://api.bitcoincharts.com/v1/trades.csv?symbol=bitstampUSD[&start=UNIXTIME]
 	 */
 	public function historicData($symbol, $start = null){
@@ -69,15 +71,17 @@ class Bitcoincharts implements \CryptoTraderHub\DataServices\DataService{
 		return \CryptoTraderHub\Core\Connection::request($url, $method, $data);
 	}	
 	
-	/* Complete history.
-	*/
-	public function completeHistory($symbol, $start = null){
-		/*
-		$url 	= 'http://api.bitcoincharts.com/v1/trades.csv';
+	/* 
+	 * Complete history. This will require a lot of memory. Consider manually downloading 
+	 * these files via: http://api.bitcoincharts.com/v1/csv
+	 */ 
+	public function completeHistory($symbol){
+		
+		$url 	= 'http://api.bitcoincharts.com/v1/csv/'.$symbol.'csv.gz';
 		$method = 'GET';
-		$data 	= Array('symbol' => $symbol, 'start' => $start);
+		$data 	= Array();
 	
-		return \CryptoTraderHub\Core\Connection::request($url, $method, $data);*/
+		return \CryptoTraderHub\Core\Connection::request($url, $method, $data, Array('CURLOPT_ENCODING' => ''));
 	}
 	
 }
