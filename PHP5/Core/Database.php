@@ -12,16 +12,17 @@ class Database {
 	private static $db_conn;
 	private static $db;
 
-	public static function initialize($database_ini) {
-		
-		$settings 			= parse_ini_file($database_ini);;
-		self::$host 		= $settings['host'];
-		self::$username 	= $settings['username'];
-		self::$password 	= $settings['password'];
-		self::$database 	= $settings['database'];
-		self::$port 		= $settings['port'];
-		
-		self::$db_conn = new \mysqli(self::$host, self::$username, self::$password, self::$database, self::$port);
+	public static function initialize($database_ini) {		
+		if(!isset(self::$db_conn)){
+			$settings 			= parse_ini_file($database_ini);;
+			self::$host 		= $settings['host'];
+			self::$username 	= $settings['username'];
+			self::$password 	= $settings['password'];
+			self::$database 	= $settings['database'];
+			self::$port 		= $settings['port'];
+			
+			self::$db_conn = new \mysqli(self::$host, self::$username, self::$password, self::$database, self::$port);
+		}
 	}
 	
 	public static function getDB() {

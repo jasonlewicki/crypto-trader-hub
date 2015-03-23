@@ -2,37 +2,37 @@
 
 namespace CryptoTraderHub\Exchanges;
 
-
+// This class is for running your AI/algorithms against
 class Test implements \CryptoTraderHub\Exchanges\Exchange{
 	
-	private $client_id;
-	private $api_key;
-	private $api_secret;
+	private $database;	
+	private $table;
+	
+	private $market_data;
+	
+	private $time_start;
+	private $time_end;
+	private $time_index;
+	
+	private $balance_usd;	
+	private $balance_btc;
 	
 	// Constructor
-	public function __construct($exchange_ini) {
-		$settings 			= parse_ini_file($exchange_ini);;
-		$this->client_id 	= $settings['client_id'];
-		$this->api_key 		= $settings['api_key'];
-		$this->api_secret 	= $settings['api_secret'];
+	public function __construct($test_ini) {
+		$settings 			= parse_ini_file($test_ini);
+		$this->database		= $settings['database'];
+		$this->table 		= $settings['table'];
+		$this->time_start 	= $settings['time_start'];
+		$this->time_end		= $settings['time_end'];	
+		$this->balance_usd 	= $settings['balance_usd'];	
+		$this->balance_btc 	= $settings['balance_btc'];	
+		$this->time_index 	= 0;	
+				
+		$market_data = \CryptoTraderHub\Core\Database::getArray("SELECT * FROM {$this->database}.{$this->table} WHERE time > {$this->time_start} AND time < {$this->time_end};");	
 	}
 	
 	// Request
-	private function request($url, $method, $data, $auth_required){
-		
-		if($auth_required === true){
-			$nonce 				= str_replace('.', '', microtime(true));
-			$message 			= $nonce . $this->client_id . $this->api_key;			
-			$signature 			= base64_encode(hash_hmac('sha256', $message, $this->api_secret, true));
-			
-			// Add auth data
-			$data['key'] 		= $this->api_key;
-			$data['signature'] 	= $signature;
-			$data['nonce'] 		= $nonce;
-		}
-		
-		return \CryptoTraderHub\Core\Connection::request($url, $method, $data);	
-	}
+	private function request($url, $method, $data, $auth_required){}
 	
 	// Tests
 	public function testPublic(){}	
@@ -51,5 +51,14 @@ class Test implements \CryptoTraderHub\Exchanges\Exchange{
 	public function buy($amount, $price){}
 	public function sell($amount, $price){}
 	public function withdraw($amount, $address){}
+	
+	// Step the algorithm through the market data, 1 step at a time
+	public function step(){
+		if (isset($this->market_data[++$this->time_index])){
+			return $this->market_data[$this->time_index];
+		}else{
+			throw new \Exception( 'End of data');	
+		}
+	}
 	
 }

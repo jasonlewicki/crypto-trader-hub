@@ -11,7 +11,7 @@ class Bitstamp implements \CryptoTraderHub\Exchanges\Exchange{
 	
 	// Constructor
 	public function __construct($exchange_ini) {
-		$settings 			= parse_ini_file($exchange_ini);;
+		$settings 			= parse_ini_file($exchange_ini);
 		$this->client_id 	= $settings['client_id'];
 		$this->api_key 		= $settings['api_key'];
 		$this->api_secret 	= $settings['api_secret'];
