@@ -44,7 +44,9 @@ class Test implements \CryptoTraderHub\Exchanges\Exchange{
 	public function transactions($timeframe){}
 	
 	// Private (auth required)
-	public function balance(){}
+	public function balance(){
+		return Array('usd' => $this->balance_usd,'btc' => $this->balance_btc);
+	}
 	public function userTransactions($limit, $offset){}
 	public function openOrders(){}
 	public function cancelOrder($id){}
