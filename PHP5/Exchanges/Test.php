@@ -5,23 +5,30 @@ namespace CryptoTraderHub\Exchanges;
 // This class is for running your AI/algorithms against
 class Test implements \CryptoTraderHub\Exchanges\Exchange{
 	
+	// RDS DB and Table
 	private $database;	
 	private $table;
 	
+	// Holds the market data that was pulled from the DB
 	private $market_data;
 	
+	// Bounds and index of the market data
 	private $time_start;
 	private $time_end;
 	private $time_index;
 		
+	// Balance of the user's fake account
 	private $balance_usd;	
 	private $balance_btc;
 
+	// Fees applied to buys and sells
 	private $buy_fee;
 	private $sell_fee;
 
+	// List of the user's transactions
 	private $transaction_arr;
 	
+	// Current unique id for transactions
 	private $id_index;
 	
 	// Constructor
