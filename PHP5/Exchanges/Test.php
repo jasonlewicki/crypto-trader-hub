@@ -69,7 +69,7 @@ class Test implements \CryptoTraderHub\Exchanges\Exchange{
 		return Array('usd' => $this->balance_usd,'btc' => $this->balance_btc);
 	}
 	
-	// List of user transactions
+	// List of user transactions with limit and offset
 	public function userTransactions($limit, $offset){
 		$subset_arr = Array();
 		$transaction_index = count($this->transaction_arr) - 1 - $offset;
