@@ -2,7 +2,6 @@
 
 namespace CryptoTraderHub\DataServices;
 
-
 class Bitcoincharts implements \CryptoTraderHub\DataServices\DataService{
 	
 	private $client_id;
