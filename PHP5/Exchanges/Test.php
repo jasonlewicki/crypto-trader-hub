@@ -3,7 +3,7 @@
 namespace CryptoTraderHub\Exchanges;
 
 // This class is for running your AI/algorithms against
-class Test implements \CryptoTraderHub\Exchanges\Exchange{
+class Test extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderHub\Exchanges\Exchange{
 	
 	// RDS DB and Table
 	private $database;	
@@ -33,6 +33,9 @@ class Test implements \CryptoTraderHub\Exchanges\Exchange{
 	
 	// Constructor
 	public function __construct($test_ini) {
+		
+		parent::__construct();
+		
 		$settings 				= parse_ini_file($test_ini);
 		$this->database			= $settings['database'];
 		$this->table 			= $settings['table'];

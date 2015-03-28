@@ -3,7 +3,7 @@
 namespace CryptoTraderHub\Exchanges;
 
 
-class Bitstamp implements \CryptoTraderHub\Exchanges\Exchange{
+class Bitstamp extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderHub\Exchanges\Exchange {
 	
 	private $client_id;
 	private $api_key;
@@ -11,6 +11,9 @@ class Bitstamp implements \CryptoTraderHub\Exchanges\Exchange{
 	
 	// Constructor
 	public function __construct($exchange_ini) {
+		
+		parent::__construct();
+		
 		$settings 			= parse_ini_file($exchange_ini);
 		$this->client_id 	= $settings['client_id'];
 		$this->api_key 		= $settings['api_key'];

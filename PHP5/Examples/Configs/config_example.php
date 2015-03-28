@@ -1,15 +1,19 @@
 <?php
 
 /**
- * The environment is used for the database configuration file. If you have no
- * database, this won't matter.
+ * Location and name of database INI file
  */
-define('ENVIRONMENT', 'development');
+define('DATABASE_INI', '/var/.../application/root/configs/database_example.ini');
 
 /**
  * Set the application root. This is the actual root of your application.
  */
 define('APP_ROOT', '/var/.../application/root');
+
+/**
+ * Set the tmp working directory. This is used for downloading large CSVs and other data files.
+ */
+define('APP_TMP', APP_ROOT.'/tmp');
 
 /**
  * Set the CryptoTraderHub root.

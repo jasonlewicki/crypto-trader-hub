@@ -2,18 +2,11 @@
 
 namespace CryptoTraderHub\DataServices;
 
-class Bitcoincharts implements \CryptoTraderHub\DataServices\DataService{
-	
-	private $client_id;
-	private $api_key;
-	private $api_secret;
-	
+class Bitcoincharts extends \CryptoTraderHub\DataServices\DataService implements \CryptoTraderHub\DataServices\DataService{
+		
 	// Constructor
-	public function __construct($exchange_ini) {
-		$settings 			= parse_ini_file($exchange_ini);;
-		$this->client_id 	= $settings['client_id'];
-		$this->api_key 		= $settings['api_key'];
-		$this->api_secret 	= $settings['api_secret'];
+	public function __construct() {		
+		parent::__construct();		
 	}
 	
 	/* 
@@ -73,14 +66,27 @@ class Bitcoincharts implements \CryptoTraderHub\DataServices\DataService{
 	/* 
 	 * Complete history. This will require a lot of memory. Consider manually downloading 
 	 * these files via: http://api.bitcoincharts.com/v1/csv
+	 * Returns the name of the file
 	 */ 
 	public function completeHistory($symbol){
+		
+		unlink(APP_TMP . '/'.$symbol.'.tmp');
+		$file_handle = fopen (APP_TMP . '/'.$symbol.'.tmp', 'w+');
 		
 		$url 	= 'http://api.bitcoincharts.com/v1/csv/'.$symbol.'csv.gz';
 		$method = 'GET';
 		$data 	= Array();
+		$options = Array(
+			'CURLOPT_ENCODING' => '', 
+			'CURLOPT_TIMEOUT' => 50,
+			'CURLOPT_FILE' => $file_handle,
+		);
 	
-		return \CryptoTraderHub\Core\Connection::request($url, $method, $data, Array('CURLOPT_ENCODING' => ''));
+		\CryptoTraderHub\Core\Connection::request($url, $method, $data, $options);
+
+		fclose($file_handle);
+		
+		return $symbol.'.tmp';
 	}
 	
 }

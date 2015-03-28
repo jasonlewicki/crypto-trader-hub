@@ -24,3 +24,12 @@ interface Exchange{
 	public function withdraw($amount, $address);
 	
 }
+
+Class Exchange{
+	
+	public function __construct() {		
+		// Start Database object
+		\CryptoTraderHub\Core\Database::initialize(DATABASE_INI);
+	}
+	
+}

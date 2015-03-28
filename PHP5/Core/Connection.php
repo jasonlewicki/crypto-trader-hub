@@ -6,6 +6,9 @@ class Connection {
 	
     public static function request($url, $method, $data, $options = Array()){
 
+		// Don't time out;
+    	set_time_limit(0);
+    	
 		// Attempt to contact server (3 times max);
 		$tries  =   0;
 		do {			
@@ -15,14 +18,14 @@ class Connection {
 			// Form request by request method
 			switch ($request_method) {
 				case 'GET' :
-					curl_setopt($curl_handle, CURLOPT_URL,$this -> host.$request_uri.'?'. http_build_query($request_data));
+					curl_setopt($curl_handle, CURLOPT_URL,$url.'?'. http_build_query($request_data));
 					break;
 				case 'POST' :
 				case 'PUT' :
 				case 'DELETE' :
 				case 'HEAD' :
 				case 'OPTIONS' :
-					curl_setopt($curl_handle, CURLOPT_URL,$this -> host.$request_uri);
+					curl_setopt($curl_handle, CURLOPT_URL,$url);
 					curl_setopt($curl_handle, CURLOPT_CUSTOMREQUEST, $request_method);
                     $postfields = $request_data;
                     if ($request_method == 'PUT') {
