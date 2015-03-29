@@ -10,5 +10,7 @@ include dirname(__FILE__).'/Configs/config.php';
 $bitcoin_charts_obj = new \CryptoTraderHub\DataServices\Bitcoincharts();
 $filename = $bitcoin_charts_obj -> completeHistory('bitstampUSD');
 
+// Parse the history file
+
 // APP_TMP . '/'.
 
