@@ -2,7 +2,7 @@
 
 namespace CryptoTraderHub\DataServices;
 
-class Bitcoincharts extends \CryptoTraderHub\DataServices\DataService implements \CryptoTraderHub\DataServices\DataService{
+class Bitcoincharts extends \CryptoTraderHub\DataServices\DataService implements \CryptoTraderHub\DataServices\DataServiceInterface{
 		
 	// Constructor
 	public function __construct() {		
@@ -68,25 +68,92 @@ class Bitcoincharts extends \CryptoTraderHub\DataServices\DataService implements
 	 * these files via: http://api.bitcoincharts.com/v1/csv
 	 * Returns the name of the file
 	 */ 
-	public function completeHistory($symbol){
+	public function completeHistory($symbol, $load_into_database = true){
 		
-		unlink(APP_TMP . '/'.$symbol.'.tmp');
-		$file_handle = fopen (APP_TMP . '/'.$symbol.'.tmp', 'w+');
+		// Delete the old history
+		if (is_readable(APP_TMP . '/'.$symbol.'.csv')){
+			unlink(APP_TMP . '/'.$symbol.'.csv');
+		}
 		
-		$url 	= 'http://api.bitcoincharts.com/v1/csv/'.$symbol.'csv.gz';
-		$method = 'GET';
-		$data 	= Array();
-		$options = Array(
-			'CURLOPT_ENCODING' => '', 
-			'CURLOPT_TIMEOUT' => 50,
-			'CURLOPT_FILE' => $file_handle,
-		);
+		// Attempt to download the entire history for an excahnge in a certain currency
+		if(($file_handle = fopen (APP_TMP . '/'.$symbol.'.csv', 'w+')) !== false){
+			$url 	= 'http://api.bitcoincharts.com/v1/csv/'.$symbol.'.csv.gz';
+			$method = 'GET';
+			$data 	= Array();
+			$options = Array(
+				'CURLOPT_ENCODING' => 'gzip', 
+				'CURLOPT_TIMEOUT' => 50,
+				'CURLOPT_FILE' => $file_handle,
+			);
+		
+			\CryptoTraderHub\Core\Connection::request($url, $method, $data, $options);
 	
-		\CryptoTraderHub\Core\Connection::request($url, $method, $data, $options);
-
-		fclose($file_handle);
+			fclose($file_handle);
+		}else{
+			return false;
+		}
 		
+		
+		// Insert into the database
+		if($load_into_database === true){
+			echo '1'; 
+			// Now that we've downloaded the history, insert into the database
+			if(($file_handle = fopen(APP_TMP . '/'.$symbol.'.csv', 'r')) !== false){
+			//$data = fgetcsv($file_handle);
+			//echo $data[0];	 			
+				
+			echo '2';    	
+				// Drop then create the table to start anew
+			    $this->createHistoryTable($symbol);			
+			echo '3';
+				$sql = "";
+
+				// Loop through the file line-by-line nad insert
+			    for($index = 0; ($data = fgetcsv($file_handle)) !== false; $index++){
+			echo '3.5';
+			    	$sql .= "({$data[0]},{$data[1]},{$data[2]}),";
+			       	if($index % 500 == 0){		       		
+						\CryptoTraderHub\Core\Database::runQuery("INSERT INTO {$symbol} (`date`,`price`,`amount`) VALUES " . rtrim($sql,','));
+						$sql = "";
+			       	}	   
+			    }
+			echo '4';
+				// Make sure to insert and remaining data
+				if($sql != ""){
+					\CryptoTraderHub\Core\Database::runQuery("INSERT INTO {$symbol} (`date`,`price`,`amount`) VALUES " . rtrim($sql,','));
+				}
+			echo '5';
+			    fclose($file_handle);
+			}
+		}		
 		return $symbol.'.tmp';
+	}
+	
+	/* 
+	 * Helper function that creates a table in the crypto_trader_hub database that 
+	 * will be used to store market history
+	 */ 
+	private function createHistoryTable($symbol){
+		
+		// Drop the table if it exists
+		$sql = "DROP TABLE IF EXISTS `{$symbol}`;";		
+		\CryptoTraderHub\Core\Database::runQuery($sql);
+		
+		// Re-create the table if it exists with new data
+		$sql = 
+		"CREATE TABLE `{$symbol}` (
+			`{$symbol}_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+			`date` DATETIME NOT NULL,
+			`price` DOUBLE NOT NULL,
+			`amount` DOUBLE NOT NULL,
+			PRIMARY KEY (`bitstampUSD_id`),
+			UNIQUE INDEX `date` (`date`)
+		)
+		COLLATE='utf8_general_ci'
+		ENGINE=InnoDB
+		;";		
+		\CryptoTraderHub\Core\Database::runQuery($sql);
+		
 	}
 	
 }

@@ -1,6 +1,8 @@
 <?php
 
-interface DataService{
+namespace CryptoTraderHub\DataServices;
+
+Interface DataServiceInterface{
 	
 	// TODO: Incomplete/Neccessary?
 	

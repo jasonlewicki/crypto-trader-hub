@@ -2,8 +2,7 @@
 
 namespace CryptoTraderHub\Exchanges;
 
-
-class Bitstamp extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderHub\Exchanges\Exchange {
+class Bitstamp extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderHub\Exchanges\ExchangeInterface {
 	
 	private $client_id;
 	private $api_key;

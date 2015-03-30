@@ -1,5 +1,7 @@
 <?php
 
+namespace CryptoTraderHub\Core;
+
 // Class to interact with databases
 class Database {
 	

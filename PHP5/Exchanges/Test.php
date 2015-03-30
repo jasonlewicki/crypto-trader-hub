@@ -3,7 +3,7 @@
 namespace CryptoTraderHub\Exchanges;
 
 // This class is for running your AI/algorithms against
-class Test extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderHub\Exchanges\Exchange{
+class Test extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderHub\Exchanges\ExchangeInterface{
 	
 	// RDS DB and Table
 	private $database;	

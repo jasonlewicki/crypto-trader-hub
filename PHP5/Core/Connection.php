@@ -16,9 +16,9 @@ class Connection {
 			$curl_handle = curl_init();		
 			
 			// Form request by request method
-			switch ($request_method) {
+			switch ($method) {
 				case 'GET' :
-					curl_setopt($curl_handle, CURLOPT_URL,$url.'?'. http_build_query($request_data));
+					curl_setopt($curl_handle, CURLOPT_URL,$url.'?'. http_build_query($data));
 					break;
 				case 'POST' :
 				case 'PUT' :
@@ -26,9 +26,9 @@ class Connection {
 				case 'HEAD' :
 				case 'OPTIONS' :
 					curl_setopt($curl_handle, CURLOPT_URL,$url);
-					curl_setopt($curl_handle, CURLOPT_CUSTOMREQUEST, $request_method);
-                    $postfields = $request_data;
-                    if ($request_method == 'PUT') {
+					curl_setopt($curl_handle, CURLOPT_CUSTOMREQUEST, $method);
+                    $postfields = $data;
+                    if ($method == 'PUT') {
                         $postfields = http_build_query($postfields);
                     }
 					curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $postfields);
@@ -51,12 +51,12 @@ class Connection {
 				
 			// Debug
 			//error_log(json_encode($result),0);
-			//error_log($this -> host.$request_uri."?".http_build_query($request_data),0);	
+			//error_log($this -> host.$request_uri."?".http_build_query($data),0);	
 						
 			// Check if there was an error  
 		    if ($http_status >= 400){
 		    	error_log("CONNECTION ERROR HTTP STATUS: ".$http_status, 0);
-				error_log("CONNECTION ERROR URL: ".$this -> host.$request_uri, 0);
+				error_log("CONNECTION ERROR URL: ". $url, 0);
 			}
 			
     		$tries++;
