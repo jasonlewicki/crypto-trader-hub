@@ -76,53 +76,56 @@ class Bitcoincharts extends \CryptoTraderHub\DataServices\DataService implements
 		}
 		
 		// Attempt to download the entire history for an excahnge in a certain currency
-		if(($file_handle = fopen (APP_TMP . '/'.$symbol.'.csv', 'w+')) !== false){
+		if(($file_handle = fopen (APP_TMP . '/'.$symbol.'.csv.gz', 'w+')) !== false){
 			$url 	= 'http://api.bitcoincharts.com/v1/csv/'.$symbol.'.csv.gz';
 			$method = 'GET';
 			$data 	= Array();
 			$options = Array(
-				'CURLOPT_ENCODING' => 'gzip', 
-				'CURLOPT_TIMEOUT' => 50,
 				'CURLOPT_FILE' => $file_handle,
 			);
 		
-			\CryptoTraderHub\Core\Connection::request($url, $method, $data, $options);
-	
+			\CryptoTraderHub\Core\Connection::request($url, $method, $data, $options);			
 			fclose($file_handle);
+			
+			$buffer_size = 262144;
+			$in_file_handle = gzopen(APP_TMP . '/'.$symbol.'.csv.gz', 'rb');
+			$out_file_handle = fopen(APP_TMP . '/'.$symbol.'.csv', 'wb');
+			// Keep repeating until the end of the input file
+			while(!gzeof($in_file_handle)) {
+				fwrite($out_file_handle, gzread($in_file_handle, $buffer_size));
+			}
+			// Files are done, close files
+			fclose($out_file_handle);
+			gzclose($in_file_handle);
+			unlink(APP_TMP . '/'.$symbol.'.csv.gz');
+			
 		}else{
 			return false;
-		}
-		
+		}		
 		
 		// Insert into the database
 		if($load_into_database === true){
-			echo '1'; 
+			
 			// Now that we've downloaded the history, insert into the database
-			if(($file_handle = fopen(APP_TMP . '/'.$symbol.'.csv', 'r')) !== false){
-			//$data = fgetcsv($file_handle);
-			//echo $data[0];	 			
-				
-			echo '2';    	
+			if(($file_handle = fopen(APP_TMP . '/'.$symbol.'.csv', 'r')) !== false){	 			
+				  	
 				// Drop then create the table to start anew
-			    $this->createHistoryTable($symbol);			
-			echo '3';
+			    $this->createHistoryTable($symbol);		
+			    
 				$sql = "";
-
+				
 				// Loop through the file line-by-line nad insert
-			    for($index = 0; ($data = fgetcsv($file_handle)) !== false; $index++){
-			echo '3.5';
-			    	$sql .= "({$data[0]},{$data[1]},{$data[2]}),";
-			       	if($index % 500 == 0){		       		
-						\CryptoTraderHub\Core\Database::runQuery("INSERT INTO {$symbol} (`date`,`price`,`amount`) VALUES " . rtrim($sql,','));
+			    for($index = 0; ($data = fgetcsv($file_handle)) !== false; $index++){			    	
+			    	$sql .= "('".date('Y-m-d H:i:00', $data[0])."',{$data[1]},{$data[2]}),";
+			       	if($index % 10000 == 0){		       		
+						\CryptoTraderHub\Core\Database::runQuery("INSERT INTO {$symbol} (`date`,`price`,`volume`) VALUES " . rtrim($sql,','). " ON DUPLICATE KEY UPDATE `volume`=`volume`+VALUES(`volume`);");
 						$sql = "";
 			       	}	   
 			    }
-			echo '4';
 				// Make sure to insert and remaining data
 				if($sql != ""){
-					\CryptoTraderHub\Core\Database::runQuery("INSERT INTO {$symbol} (`date`,`price`,`amount`) VALUES " . rtrim($sql,','));
+					\CryptoTraderHub\Core\Database::runQuery("INSERT INTO {$symbol} (`date`,`price`,`volume`) VALUES " . rtrim($sql,','). " ON DUPLICATE KEY UPDATE `volume`=`volume`+VALUES(`volume`);");
 				}
-			echo '5';
 			    fclose($file_handle);
 			}
 		}		
@@ -145,9 +148,10 @@ class Bitcoincharts extends \CryptoTraderHub\DataServices\DataService implements
 			`{$symbol}_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 			`date` DATETIME NOT NULL,
 			`price` DOUBLE NOT NULL,
-			`amount` DOUBLE NOT NULL,
-			PRIMARY KEY (`bitstampUSD_id`),
-			UNIQUE INDEX `date` (`date`)
+			`volume` DOUBLE NOT NULL,
+			PRIMARY KEY (`{$symbol}_id`),
+			UNIQUE INDEX `date` (`date`),
+			INDEX `price` (`price`)
 		)
 		COLLATE='utf8_general_ci'
 		ENGINE=InnoDB

@@ -12,10 +12,12 @@ class Test extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderH
 	// Holds the market data that was pulled from the DB
 	private $market_data;
 	
+	// Current unique id for market data
+	private $market_data_index;
+		
 	// Bounds and index of the market data
 	private $time_start;
 	private $time_end;
-	private $time_index;
 		
 	// Balance of the user's fake account
 	private $balance_usd;	
@@ -29,7 +31,7 @@ class Test extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderH
 	private $transaction_arr;
 	
 	// Current unique id for transactions
-	private $id_index;
+	private $transaction_index;
 	
 	// Constructor
 	public function __construct($test_ini) {
@@ -44,12 +46,14 @@ class Test extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderH
 		$this->balance_usd 		= $settings['balance_usd'];	
 		$this->balance_btc 		= $settings['balance_btc'];	
 		$this->buy_fee		 	= $settings['buy_fee'];		
-		$this->sell_fee		 	= $settings['sell_fee'];	
-		$this->time_index 		= 0;		
-		$this->id_index 		= 1;	
-		$this->transaction_arr 	= Array();		
-	
-		$market_data = \CryptoTraderHub\Core\Database::getArray("SELECT * FROM {$this->database}.{$this->table} WHERE time > {$this->time_start} AND time < {$this->time_end};");	
+		$this->sell_fee		 	= $settings['sell_fee'];
+		$this->transaction_arr 	= Array();			
+		$this->transaction_index= 1;		
+		$this->market_data		= Array();
+		$this->market_data_index= 0;	
+		
+		$this->market_data = \CryptoTraderHub\Core\Database::getArray("SELECT * FROM {$this->database}.{$this->table} WHERE date >= {$this->time_start} AND time <= {$this->time_end} AND {$this->table}_id > {$this->market_data_index} LIMIT 5000;");
+		
 	}
 	
 	// Request
@@ -60,7 +64,7 @@ class Test extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderH
 	public function testPrivate(){return true;}	
 	
 	// Public (no auth)
-	public function ticker(){return $this->market_data[$this->time_index];}
+	public function ticker(){return current($this->market_data);}
 	public function orderBook(){return Array();}
 	
 	// Return a list of transactions withing the requested timeframe ()
@@ -126,7 +130,7 @@ class Test extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderH
 		}
 		
 		$new_transaction = Array(
-			'id' => $this->id_index++, 
+			'id' => $this->transaction_index++, 
 			'status' => 'open', 
 			'type' => 'buy',
 			'amount' => $amount,
@@ -147,7 +151,7 @@ class Test extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderH
 		}
 		
 		$new_transaction = Array(
-			'id' => $this->id_index++, 
+			'id' => $this->transaction_index++, 
 			'status' => 'open', 
 			'type' => 'sell',
 			'amount' => $amount,
@@ -166,18 +170,27 @@ class Test extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderH
 	
 	// Step the algorithm through the market data, 1 step at a time (check limit orders)
 	public function step(){
-		if (isset($this->market_data[++$this->time_index])){			
+		
+		if (current($this->market_data) === false) {
+            $this->market_data = \CryptoTraderHub\Core\Database::getArray("SELECT * FROM {$this->database}.{$this->table} WHERE date > {$this->time_start} AND time < {$this->time_end} AND {$this->table}_id > {$this->market_data_index} LIMIT 5000;");
+			if (current($this->market_data) === false) {
+				throw new \Exception( 'End of data');
+			}
+        } else {
+        	
+			$market_data_current = current($this->market_data);
+			
 			// Perform Exchange operations
 			foreach($this->transaction_arr as $key => $value){
 				if($this->transaction_arr[$key]['status'] == "open"){					
 					if($this->transaction_arr[$key]['type'] == "buy"){
-						if ($this->transaction_arr[$key]['price'] >= $this->market_data[$this->time_index]['price']){
+						if ($this->transaction_arr[$key]['price'] >= $market_data_current['price']){
 							$this->balance_btc = floor(($this->balance_btc + ($this->transaction_arr[$key]['amount'] - $this->transaction_arr[$key]['fulfilled']))*100000000)/100000000;
 							$this->transaction_arr[$key]['fulfilled'] = $this->transaction_arr[$key]['amount'];
 							$this->transaction_arr[$key]['status'] = 'fulfilled';							
 						}
 					}else if($this->transaction_arr[$key]['type'] == "sell"){
-						if ($this->transaction_arr[$key]['price'] <= $this->market_data[$this->time_index]['price']){
+						if ($this->transaction_arr[$key]['price'] <= $market_data_current['price']){
 							$this->balance_us = floor(($this->balance_usd + (($this->transaction_arr[$key]['amount'] - $this->transaction_arr[$key]['fulfilled']) * $this->transaction_arr[$key]['price']))*100)/100;
 							$this->balance_btc = floor(($this->balance_btc + ($this->transaction_arr[$key]['amount'] - $this->transaction_arr[$key]['fulfilled']))*100000000)/100000000;
 							$this->transaction_arr[$key]['fulfilled'] = $this->transaction_arr[$key]['amount'];
@@ -186,10 +199,13 @@ class Test extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderH
 					}
 				}					
 			}			
-			return $this->market_data[$this->time_index];
-		}else{
-			throw new \Exception( 'End of data');	
-		}
+	
+			$this->market_data_index = $market_data_current[$this->table.'id'];
+			next($this->market_data);
+
+			return $market_data_current;
+        }		
+		
 	}
 	
 }

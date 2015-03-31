@@ -35,16 +35,22 @@ class Connection {
 					break;
 			}	
 			
+
+			// Send Request
+			curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, true);
+			
 			// cURL options
 			foreach($options as $key => $value){
-				curl_setopt($curl_handle, constant($key), $value);
+				$result = curl_setopt($curl_handle, constant($key), $value);
 			}
-						
-			// Send Request
-			curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, true);    
-		    
-		    // Get Result
-		    $result = json_decode(curl_exec($curl_handle), true);    
+
+			if(array_key_exists("CURLOPT_FILE",$options)){
+				// Get Result
+				curl_exec($curl_handle);
+			}else{				
+				// Get Result
+				$result = json_decode(curl_exec($curl_handle), true);
+			}		        
 		    
 		    // Get Result Status
 		    $http_status = curl_getinfo($curl_handle, CURLINFO_HTTP_CODE);		
@@ -52,6 +58,7 @@ class Connection {
 			// Debug
 			//error_log(json_encode($result),0);
 			//error_log($this -> host.$request_uri."?".http_build_query($data),0);	
+		    //curl_error($curl_handle);
 						
 			// Check if there was an error  
 		    if ($http_status >= 400){
