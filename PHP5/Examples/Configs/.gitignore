@@ -1,4 +1,4 @@
 config.php
 exchange_bitstamp.ini
 database.ini
-test.ini
+exchange_test.ini
