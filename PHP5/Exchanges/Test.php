@@ -124,8 +124,8 @@ class Test extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderH
 	
 	// Purchase
 	public function buy($amount, $price){
-		if($amount*$price > $this->balance_usd){
-			throw new \Exception( 'Balance is: $'.$this->balance_usd . " Tried to buy: $".$amount*$price);
+		if($amount*$price + $amount*$price*$this->buy_fee > $this->balance_usd){
+			throw new \Exception( 'Balance is: $'.$this->balance_usd . " Tried to buy: $".$amount*$price ." + Fee: $".$amount*$price*$this->buy_fee);
 		}
 		
 		$new_transaction = Array(
@@ -138,7 +138,7 @@ class Test extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderH
 		);
 		
 		$this->transaction_arr[] = $new_transaction;
-		$this->balance_usd = floor(($this->balance_usd - $amount*$price)*100)/100;
+		$this->balance_usd = floor(($this->balance_usd - $amount*$price - $amount*$price*$this->buy_fee)*100)/100;
 				
 		return $new_transaction;
 	}
@@ -163,6 +163,16 @@ class Test extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderH
 				
 		return $new_transaction;		
 	}
+
+	// Purchase
+	public function buyFee(){
+		return $this->buy_fee;
+	}
+	
+	// Purchase
+	public function sellFee(){
+		return $this->sell_fee;
+	}
 	
 	// Not implemented
 	public function withdraw($amount, $address){return true;}
@@ -176,35 +186,34 @@ class Test extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderH
 				//throw new \Exception( 'End of data');
 				return false;
 			}
-        } else {
-        	
-			$market_data_current = current($this->market_data);
-			
-			// Perform Exchange operations
-			foreach($this->transaction_arr as $key => $value){
-				if($this->transaction_arr[$key]['status'] == "open"){					
-					if($this->transaction_arr[$key]['type'] == "buy"){
-						if ($this->transaction_arr[$key]['price'] >= $market_data_current['price']){
-							$this->balance_btc = floor(($this->balance_btc + ($this->transaction_arr[$key]['amount'] - $this->transaction_arr[$key]['fulfilled']))*100000000)/100000000;
-							$this->transaction_arr[$key]['fulfilled'] = $this->transaction_arr[$key]['amount'];
-							$this->transaction_arr[$key]['status'] = 'fulfilled';							
-						}
-					}else if($this->transaction_arr[$key]['type'] == "sell"){
-						if ($this->transaction_arr[$key]['price'] <= $market_data_current['price']){
-							$this->balance_us = floor(($this->balance_usd + (($this->transaction_arr[$key]['amount'] - $this->transaction_arr[$key]['fulfilled']) * $this->transaction_arr[$key]['price']))*100)/100;
-							$this->balance_btc = floor(($this->balance_btc + ($this->transaction_arr[$key]['amount'] - $this->transaction_arr[$key]['fulfilled']))*100000000)/100000000;
-							$this->transaction_arr[$key]['fulfilled'] = $this->transaction_arr[$key]['amount'];
-							$this->transaction_arr[$key]['status'] = 'fulfilled';
-						}
+        } 
+                	
+		$market_data_current = current($this->market_data);
+		
+		// Perform Exchange operations
+		foreach($this->transaction_arr as $key => $value){
+			if($this->transaction_arr[$key]['status'] == "open"){					
+				if($this->transaction_arr[$key]['type'] == "buy"){
+					if ($this->transaction_arr[$key]['price'] >= $market_data_current['price']){
+						$this->balance_btc = floor(($this->balance_btc + ($this->transaction_arr[$key]['amount'] - $this->transaction_arr[$key]['fulfilled']))*100000000)/100000000;
+						$this->transaction_arr[$key]['fulfilled'] = $this->transaction_arr[$key]['amount'];
+						$this->transaction_arr[$key]['status'] = 'fulfilled';							
 					}
-				}					
-			}			
-	
-			$this->market_data_index = $market_data_current[$this->table.'_id'];
-			next($this->market_data);
+				}else if($this->transaction_arr[$key]['type'] == "sell"){
+					if ($this->transaction_arr[$key]['price'] <= $market_data_current['price']){
+						$this->balance_us = floor(($this->balance_usd + (($this->transaction_arr[$key]['amount'] - $this->transaction_arr[$key]['fulfilled']) * $this->transaction_arr[$key]['price']) - ((($this->transaction_arr[$key]['amount'] - $this->transaction_arr[$key]['fulfilled']) * $this->transaction_arr[$key]['price'])*$this->sell_fee))*100)/100;
+						$this->balance_btc = floor(($this->balance_btc + ($this->transaction_arr[$key]['amount'] - $this->transaction_arr[$key]['fulfilled']))*100000000)/100000000;
+						$this->transaction_arr[$key]['fulfilled'] = $this->transaction_arr[$key]['amount'];
+						$this->transaction_arr[$key]['status'] = 'fulfilled';
+					}
+				}
+			}					
+		}			
 
-			return $market_data_current;
-        }		
+		$this->market_data_index = $market_data_current[$this->table.'_id'];
+		next($this->market_data);
+		
+		return $market_data_current;
 		
 	}
 	

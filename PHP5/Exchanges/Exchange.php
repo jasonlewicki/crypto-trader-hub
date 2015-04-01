@@ -23,6 +23,8 @@ Interface ExchangeInterface{
 	public function cancelOrder($id);
 	public function buy($amount, $price);
 	public function sell($amount, $price);
+	public function buyFee();
+	public function sellFee();
 	public function withdraw($amount, $address);
 	
 }

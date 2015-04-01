@@ -14,4 +14,8 @@ class Statistics {
 	    return (float) sqrt($variance);
     }
 	
+	public static function mean($values_arr){
+		return (float) (array_sum($values_arr) / count($values_arr));
+    }
+	
 }
