@@ -36,22 +36,21 @@ class Test extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderH
 	// Constructor
 	public function __construct($test_ini) {
 		
-		parent::__construct();
+		parent::__construct($test_ini);
 		
-		$settings 				= parse_ini_file($test_ini);
-		$this->database			= $settings['database'];
-		$this->table 			= $settings['table'];
-		$this->time_start 		= $settings['time_start'];
-		$this->time_end			= $settings['time_end'];	
-		$this->balance_usd 		= $settings['balance_usd'];	
-		$this->balance_btc 		= $settings['balance_btc'];	
-		$this->buy_fee		 	= $settings['buy_fee'];		
-		$this->sell_fee		 	= $settings['sell_fee'];
+		$this->database			= $this->settings['database'];
+		$this->table 			= $this->settings['table'];
+		$this->time_start 		= $this->settings['time_start'];
+		$this->time_end			= $this->settings['time_end'];	
+		$this->balance_usd 		= $this->settings['balance_usd'];	
+		$this->balance_btc 		= $this->settings['balance_btc'];	
+		$this->buy_fee		 	= $this->settings['buy_fee'];		
+		$this->sell_fee		 	= $this->settings['sell_fee'];
 		$this->transaction_arr 	= Array();			
 		$this->transaction_index= 1;		
 		$this->market_data		= Array();
 		$this->market_data_index= 0;	
-		
+				
 		$this->market_data = \CryptoTraderHub\Core\Database::getArray("SELECT * FROM {$this->database}.{$this->table} WHERE date >= '{$this->time_start}' AND date <= '{$this->time_end}' AND {$this->table}_id > {$this->market_data_index} LIMIT 5000;");
 		
 	}

@@ -11,12 +11,11 @@ class Bitstamp extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTra
 	// Constructor
 	public function __construct($exchange_ini) {
 		
-		parent::__construct();
+		parent::__construct($exchange_ini);
 		
-		$settings 			= parse_ini_file($exchange_ini);
-		$this->client_id 	= $settings['client_id'];
-		$this->api_key 		= $settings['api_key'];
-		$this->api_secret 	= $settings['api_secret'];
+		$this->client_id 	= $this->settings['client_id'];
+		$this->api_key 		= $this->settings['api_key'];
+		$this->api_secret 	= $this->settings['api_secret'];
 	}
 	
 	// Request
