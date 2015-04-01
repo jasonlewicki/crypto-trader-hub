@@ -9,6 +9,8 @@ include CRYPTO_TRADER_HUB_ROOT.DIRECTORY_SEPARATOR.'autoload.php';
 
 // Create a Test exchange with the Historical data that we just inserted into the DB
 $test_exchange_obj = new \CryptoTraderHub\Exchanges\Test(APP_ROOT.'/Configs/exchange_test.ini');
-
-
+$i = 0;
+while(($slice = $test_exchange_obj->step()) !== false){
+	echo ++$i ." ".$slice['price']."\n";
+}
 

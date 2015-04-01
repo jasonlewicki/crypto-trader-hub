@@ -1,11 +1,11 @@
 <?php
 
-namespace CryptoTraderHub\Exchange;
+namespace CryptoTraderHub\Exchanges;
 
 Interface ExchangeInterface{
 	
 	// Request
-	private function request($url, $method, $data, $auth_required);
+	//private function request($url, $method, $data, $auth_required);
 	
 	// Tests
 	public function testPublic();	

@@ -52,7 +52,7 @@ class Test extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderH
 		$this->market_data		= Array();
 		$this->market_data_index= 0;	
 		
-		$this->market_data = \CryptoTraderHub\Core\Database::getArray("SELECT * FROM {$this->database}.{$this->table} WHERE date >= {$this->time_start} AND time <= {$this->time_end} AND {$this->table}_id > {$this->market_data_index} LIMIT 5000;");
+		$this->market_data = \CryptoTraderHub\Core\Database::getArray("SELECT * FROM {$this->database}.{$this->table} WHERE date >= '{$this->time_start}' AND date <= '{$this->time_end}' AND {$this->table}_id > {$this->market_data_index} LIMIT 5000;");
 		
 	}
 	
@@ -172,9 +172,10 @@ class Test extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderH
 	public function step(){
 		
 		if (current($this->market_data) === false) {
-            $this->market_data = \CryptoTraderHub\Core\Database::getArray("SELECT * FROM {$this->database}.{$this->table} WHERE date > {$this->time_start} AND time < {$this->time_end} AND {$this->table}_id > {$this->market_data_index} LIMIT 5000;");
+            $this->market_data = \CryptoTraderHub\Core\Database::getArray("SELECT * FROM {$this->database}.{$this->table} WHERE date > '{$this->time_start}' AND date < '{$this->time_end}' AND {$this->table}_id > {$this->market_data_index} LIMIT 5000;");
 			if (current($this->market_data) === false) {
-				throw new \Exception( 'End of data');
+				//throw new \Exception( 'End of data');
+				return false;
 			}
         } else {
         	
@@ -200,7 +201,7 @@ class Test extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderH
 				}					
 			}			
 	
-			$this->market_data_index = $market_data_current[$this->table.'id'];
+			$this->market_data_index = $market_data_current[$this->table.'_id'];
 			next($this->market_data);
 
 			return $market_data_current;
