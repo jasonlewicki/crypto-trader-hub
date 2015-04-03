@@ -202,8 +202,7 @@ class Test extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderH
 					}
 				}else if($this->transaction_arr[$key]['type'] == "sell"){
 					if ($this->transaction_arr[$key]['price'] <= $market_data_current['price']){
-						$this->balance_us = floor(($this->balance_usd + (($this->transaction_arr[$key]['amount'] - $this->transaction_arr[$key]['fulfilled']) * $this->transaction_arr[$key]['price']) - ((($this->transaction_arr[$key]['amount'] - $this->transaction_arr[$key]['fulfilled']) * $this->transaction_arr[$key]['price'])*$this->sell_fee))*100)/100;
-						$this->balance_btc = floor(($this->balance_btc + ($this->transaction_arr[$key]['amount'] - $this->transaction_arr[$key]['fulfilled']))*100000000)/100000000;
+						$this->balance_usd = floor(($this->balance_usd + (($this->transaction_arr[$key]['amount'] - $this->transaction_arr[$key]['fulfilled']) * $this->transaction_arr[$key]['price']) - ((($this->transaction_arr[$key]['amount'] - $this->transaction_arr[$key]['fulfilled']) * $this->transaction_arr[$key]['price'])*$this->sell_fee))*100)/100;
 						$this->transaction_arr[$key]['fulfilled'] = $this->transaction_arr[$key]['amount'];
 						$this->transaction_arr[$key]['status'] = 'fulfilled';
 						unset($this->transaction_arr[$key]);
