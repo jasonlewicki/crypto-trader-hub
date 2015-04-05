@@ -56,7 +56,7 @@ class Test extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderH
 	}
 	
 	// Request
-	private function request($url, $method, $data, $auth_required){}
+	//private function request($url, $method, $data, $auth_required){}
 	
 	// Tests
 	public function testPublic(){return true;}	
