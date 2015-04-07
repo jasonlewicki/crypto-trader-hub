@@ -50,8 +50,6 @@ class Test extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderH
 		$this->transaction_index= 1;		
 		$this->market_data		= Array();
 		$this->market_data_index= 0;	
-				
-		$this->market_data = \CryptoTraderHub\Core\Database::getArray("SELECT * FROM {$this->database}.{$this->table} WHERE date >= '{$this->time_start}' AND date <= '{$this->time_end}' AND {$this->table}_id > {$this->market_data_index} LIMIT 5000;");
 		
 	}
 	
