@@ -40,17 +40,17 @@ class Bitstamp extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTra
 	public function testPrivate(){}	
 	
 	// Public (no auth)
-	public function ticker(){}
-	public function orderBook(){}
-	public function transactions($timeframe){}
+	public function ticker(){return $this->request('https://www.bitstamp.net/api/ticker/', 'GET', Array(), false);}
+	public function orderBook(){return $this->request('https://www.bitstamp.net/api/order_book/', 'GET', Array(), false);}
+	public function transactions($timeframe){return $this->request('https://www.bitstamp.net/api/transactions/', 'GET', Array('time'=>$timeframe), false);}
 	
 	// Private (auth required)
-	public function balance(){}
-	public function userTransactions($limit, $offset){}
-	public function openOrders(){}
-	public function cancelOrder($id){}
-	public function buy($amount, $price){}
-	public function sell($amount, $price){}
-	public function withdraw($amount, $address){}
+	public function balance(){return $this->request('https://www.bitstamp.net/api/balance/', 'POST', Array(), true);}
+	public function userTransactions($limit, $offset){return $this->request('https://www.bitstamp.net/api/user_transactions/', 'POST', Array('limit'=>$limit,'offset'=>$offset), true);}
+	public function openOrders(){return $this->request('https://www.bitstamp.net/api/open_orders/', 'POST', Array(), true);}
+	public function cancelOrder($id){return $this->request('https://www.bitstamp.net/api/cancel_order/', 'POST', Array('id'=>$id), true);}
+	public function buy($amount, $price){return $this->request('https://www.bitstamp.net/api/buy/', 'POST', Array('amount'=>$amount,'price'=>$price), true);}
+	public function sell($amount, $price){return $this->request('https://www.bitstamp.net/api/sell/', 'POST', Array('amount'=>$amount,'price'=>$price), true);}
+	public function withdraw($amount, $address){return $this->request('https://www.bitstamp.net/api/bitcoin_withdrawal/', 'POST', Array('amount'=>$amount,'address'=>$address), true);}
 	
 }
