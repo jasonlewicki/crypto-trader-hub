@@ -4,18 +4,24 @@ namespace CryptoTraderHub\Exchanges;
 
 class Bitstamp extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderHub\Exchanges\ExchangeInterface {
 	
-	private $client_id;
+	private $customer_id;
 	private $api_key;
 	private $api_secret;
+	
+	// Fees applied to buys and sells
+	private $buy_fee;
+	private $sell_fee;
 	
 	// Constructor
 	public function __construct($exchange_ini) {
 		
 		parent::__construct($exchange_ini);
 		
-		$this->client_id 	= $this->settings['client_id'];
+		$this->customer_id 	= $this->settings['customer_id'];
 		$this->api_key 		= $this->settings['api_key'];
 		$this->api_secret 	= $this->settings['api_secret'];
+		$this->buy_fee		= $this->settings['buy_fee'];		
+		$this->sell_fee		= $this->settings['sell_fee'];
 	}
 	
 	// Request
@@ -23,7 +29,7 @@ class Bitstamp extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTra
 		
 		if($auth_required === true){
 			$nonce 				= str_replace('.', '', microtime(true));
-			$message 			= $nonce . $this->client_id . $this->api_key;			
+			$message 			= $nonce . $this->customer_id . $this->api_key;			
 			$signature 			= base64_encode(hash_hmac('sha256', $message, $this->api_secret, true));
 			
 			// Add auth data
@@ -52,5 +58,8 @@ class Bitstamp extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTra
 	public function buy($amount, $price){return $this->request('https://www.bitstamp.net/api/buy/', 'POST', Array('amount'=>$amount,'price'=>$price), true);}
 	public function sell($amount, $price){return $this->request('https://www.bitstamp.net/api/sell/', 'POST', Array('amount'=>$amount,'price'=>$price), true);}
 	public function withdraw($amount, $address){return $this->request('https://www.bitstamp.net/api/bitcoin_withdrawal/', 'POST', Array('amount'=>$amount,'address'=>$address), true);}
+	
+	public function buyFee(){return $this->buy_fee;}
+	public function sellFee(){return $this->sell_fee;}
 	
 }
