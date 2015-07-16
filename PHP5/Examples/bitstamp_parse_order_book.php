@@ -10,6 +10,7 @@ $bitstamp_obj = new \CryptoTraderHub\Exchanges\Bitstamp(APP_ROOT.'/Configs/excha
 // Get Bitstamp historical market data and insert into the DB
 \CryptoTraderHub\Core\Database::initialize(DATABASE_INI);
 
+// Get the order book
 $order_book = $bitstamp_obj->orderBook();
 
 $timestamp = $order_book['timestamp'];
@@ -20,4 +21,5 @@ foreach($order_book['bids'] as $bid){
 	$sql .= "('".date('Y-m-d H:i:s', $timestamp)."',{$bid[0]},{$bid[1]}),";					
 }
 
+// Insert the order book into the database
 \CryptoTraderHub\Core\Database::runQuery("INSERT INTO ".\CryptoTraderHub\Core\Database::getDB().".bitstamp_order_book (`timestamp`,`price`,`volume`) VALUES  " . rtrim($sql,','). ";");
