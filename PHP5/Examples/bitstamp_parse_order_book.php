@@ -13,10 +13,9 @@ $bitstamp_obj = new \CryptoTraderHub\Exchanges\Bitstamp(APP_ROOT.'/Configs/excha
 // Get the order book
 $order_book = $bitstamp_obj->orderBook();
 
+// Create SQL statement
 $timestamp = $order_book['timestamp'];
-
 $sql = '';
-
 foreach($order_book['bids'] as $bid){		
 	$sql .= "('".date('Y-m-d H:i:s', $timestamp)."',{$bid[0]},{$bid[1]}),";					
 }
