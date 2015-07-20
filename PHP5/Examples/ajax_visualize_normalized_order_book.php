@@ -81,12 +81,12 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'
 		      				
 				};
 
-				//setInterval(function(){updateChart()}, updateInterval); 
+				setInterval(function(){updateChart()}, updateInterval); 
 			}		
 		</script>
 
 	</head>
 	<body>	
-		<div id="chartContainer" style="height: 300px; width:100%;"></div>
+		<div id="chartContainer" style="height: 800px; width:100%;"></div>
 	</body>
 </html>
