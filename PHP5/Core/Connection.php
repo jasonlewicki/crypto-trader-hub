@@ -64,6 +64,7 @@ class Connection {
 		    if ($http_status >= 400){
 		    	error_log("CONNECTION ERROR HTTP STATUS: ".$http_status, 0);
 				error_log("CONNECTION ERROR URL: ". $url, 0);
+				throw new \Exception("{$http_status} - $url");
 			}
 			
     		$tries++;

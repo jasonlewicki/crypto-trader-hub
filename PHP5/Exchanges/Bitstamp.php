@@ -42,8 +42,8 @@ class Bitstamp extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTra
 	}
 	
 	// Tests
-	public function testPublic(){}	
-	public function testPrivate(){}	
+	public function testPublic(){$this->ticker();}	
+	public function testPrivate(){$this->balance();}	
 	
 	// Public (no auth)
 	public function ticker(){return $this->request('https://www.bitstamp.net/api/ticker/', 'GET', Array(), false);}
