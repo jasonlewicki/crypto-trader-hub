@@ -88,6 +88,8 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'
 
 	</head>
 	<body>	
+		
 		<div id="chartContainer" style="height: 800px; width:100%;"></div>
+		
 	</body>
 </html>
