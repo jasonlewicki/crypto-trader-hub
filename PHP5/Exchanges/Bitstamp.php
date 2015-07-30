@@ -58,7 +58,8 @@ class Bitstamp extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTra
 	public function buy($amount, $price){return $this->request('https://www.bitstamp.net/api/buy/', 'POST', Array('amount'=>$amount,'price'=>$price), true);}
 	public function sell($amount, $price){return $this->request('https://www.bitstamp.net/api/sell/', 'POST', Array('amount'=>$amount,'price'=>$price), true);}
 	public function withdraw($amount, $address){return $this->request('https://www.bitstamp.net/api/bitcoin_withdrawal/', 'POST', Array('amount'=>$amount,'address'=>$address), true);}
-	
+		
+	// Helper methods
 	public function buyFee(){return $this->buy_fee;}
 	public function sellFee(){return $this->sell_fee;}
 	
