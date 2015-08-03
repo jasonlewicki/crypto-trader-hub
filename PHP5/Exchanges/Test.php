@@ -161,7 +161,7 @@ class Test extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderH
 				
 		return $new_transaction;		
 	}
-
+	
 	// Purchase
 	public function buyFee(){
 		return $this->buy_fee;
