@@ -210,6 +210,8 @@ class Test extends \CryptoTraderHub\Exchanges\Exchange implements \CryptoTraderH
 		}		
 		
 		$this->market_data_index = $market_data_current[$this->table.'_id'];
+		
+		// Step the market data
 		next($this->market_data);
 		
 		return $market_data_current;
