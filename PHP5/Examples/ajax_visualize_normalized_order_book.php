@@ -6,7 +6,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'
 	include CRYPTO_TRADER_HUB_ROOT.DIRECTORY_SEPARATOR.'autoload.php';
 	\CryptoTraderHub\Core\Database::initialize(DATABASE_INI);
 	$timestamp = $_GET['timestamp'];
-	$result  = \CryptoTraderHub\Core\Database::getArray("SELECT timestamp, price, volume FROM ".\CryptoTraderHub\Core\Database::getDB().".bitstamp_order_book WHERE `timestamp` = (SELECT `timestamp` FROM ".\CryptoTraderHub\Core\Database::getDB().".bitstamp_order_book WHERE `timestamp` > '{$timestamp}' LIMIT 1) AND volume < 1000");
+	$result  = \CryptoTraderHub\Core\Database::getArray("SELECT timestamp, price, volume, type FROM ".\CryptoTraderHub\Core\Database::getDB().".bitstamp_order_book WHERE `timestamp` = (SELECT `timestamp` FROM ".\CryptoTraderHub\Core\Database::getDB().".bitstamp_order_book WHERE `timestamp` > '{$timestamp}' LIMIT 1) AND volume < 1000 AND price < 300 and price > 250");
 	$response = Array('timestamp' => $result[0]['timestamp'], 'data_set' => $result);
 	echo json_encode($response);
 	exit();
@@ -39,11 +39,17 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/jquery.canvasjs.min.js"></script>	
 		<script type="text/javascript">
 			
-			window.onload = function () {
-
-		      	var dps = [];   //dataPoints. 
-		
-		      	var chart = new CanvasJS.Chart("chartContainer",{
+			var timer;
+			var dps = [];   //dataPoints. 
+			var chart;
+			var xVal = dps.length + 1;
+	      	var yVal = 15;	
+	      	var updateInterval = 1000;
+	      	var timestamp = "1977-01-01 00:00:00";
+			
+			$(function() {
+				
+		    	chart = new CanvasJS.Chart("chartContainer",{
 		      		title :{
 		      			text: "Order Book Data"
 		      		},
@@ -57,38 +63,41 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'
 		      			type: "scatter",
 		      			dataPoints : dps
 		      		}]
-		      	});
-		
-		      	chart.render();
-		      	var xVal = dps.length + 1;
-		      	var yVal = 15;	
-		      	var updateInterval = 1000;
-		      	var timestamp = "1977-01-01 00:00:00";
-		
-		      	var updateChart = function () {	      	
-		      		
-		      		$.ajax({
-					  	url: "/",
-					  	context: document.body,
-					  	dataType: 'json',
-					  	data: {'timestamp':timestamp}
-					}).done(function(data) {
-						timestamp = data.timestamp;
-						dps.length = 0;
-						$.each(data.data_set, function( index, value ) {
-						  	dps.push({x:parseFloat(value.price),y:parseFloat(value.volume)});
-						});					
-			      		chart.render();
-					});		      	
-		      				
-				};
-
-				setInterval(function(){updateChart()}, updateInterval); 
+		      	});  	
+		      	chart.render();		      	
+			
+				$('#start').click(function() {
+					timer = setInterval(function(){updateChart()}, updateInterval);
+				});
+				
+				$('#stop').click(function() {
+					clearInterval(timer);
+				});
+				
+			});		
+			
+			function updateChart() {		      		
+	      		$.ajax({
+				  	url: "/",
+				  	context: document.body,
+				  	dataType: 'json',
+				  	data: {'timestamp':timestamp}
+				}).done(function(data) {
+					timestamp = data.timestamp;
+					dps.length = 0;
+					$.each(data.data_set, function( index, value ) {
+					  	dps.push({x:parseFloat(value.price),y:parseFloat(value.volume)});
+					});					
+		      		chart.render();
+				});			      				
 			}		
+			
 		</script>
 
 	</head>
 	<body>			
+		<button id="start">Start</button>
+		<button id="stop">Stop</button>
 		<div id="chartContainer" style="height: 850px; width:100%;"></div>		
 	</body>
 </html>
