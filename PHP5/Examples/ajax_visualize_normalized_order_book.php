@@ -44,7 +44,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'
 			var chart;
 			var xVal = dps.length + 1;
 	      	var yVal = 15;	
-	      	var updateInterval = 1000;
+	      	var updateInterval = 250;
 	      	var timestamp = "1977-01-01 00:00:00";
 			
 			$(function() {
@@ -85,9 +85,34 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'
 				}).done(function(data) {
 					timestamp = data.timestamp;
 					dps.length = 0;
+					
+					// Update timestamp
+					$('#timestamp').html(timestamp);
+					
+					// Add Asks Cumulative Volume
+					var ask_volume_total = 0;
 					$.each(data.data_set, function( index, value ) {
+						if(value.type == "ask"){
+							ask_volume_total += parseFloat(value.volume);
+						  	dps.push({x:parseFloat(value.price),y:parseFloat(ask_volume_total)});
+						 }
+					});		
+					
+					// Add Bids	Cumulative Volume					
+					var bid_volume_total = 0;
+					var data_reversed = data.data_set.slice().reverse();
+					$.each(data_reversed, function( index, value ) {
+						if(value.type == "bid"){
+							bid_volume_total += parseFloat(value.volume);
+						  	dps.push({x:parseFloat(value.price),y:parseFloat(bid_volume_total)});
+						 }
+					});
+					
+					// Plain data points
+					/*$.each(data.data_set, function( index, value ) {
 					  	dps.push({x:parseFloat(value.price),y:parseFloat(value.volume)});
-					});					
+					});*/						
+								
 		      		chart.render();
 				});			      				
 			}		
@@ -98,6 +123,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'
 	<body>			
 		<button id="start">Start</button>
 		<button id="stop">Stop</button>
+		<span id="timestamp"></span>
 		<div id="chartContainer" style="height: 850px; width:100%;"></div>		
 	</body>
 </html>
