@@ -6,7 +6,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'
 	include CRYPTO_TRADER_HUB_ROOT.DIRECTORY_SEPARATOR.'autoload.php';
 	\CryptoTraderHub\Core\Database::initialize(DATABASE_INI);
 	$timestamp = $_GET['timestamp'];
-	$result  = \CryptoTraderHub\Core\Database::getArray("SELECT timestamp, price, volume, type FROM ".\CryptoTraderHub\Core\Database::getDB().".bitstamp_order_book WHERE `timestamp` = (SELECT `timestamp` FROM ".\CryptoTraderHub\Core\Database::getDB().".bitstamp_order_book WHERE `timestamp` > '{$timestamp}' LIMIT 1) AND volume < 1000 AND price < 300 and price > 250");
+	$result  = \CryptoTraderHub\Core\Database::getArray("SELECT timestamp, price, volume, type FROM ".\CryptoTraderHub\Core\Database::getDB().".bitstamp_order_book WHERE `timestamp` = (SELECT `timestamp` FROM ".\CryptoTraderHub\Core\Database::getDB().".bitstamp_order_book WHERE `timestamp` > '{$timestamp}' LIMIT 1) AND volume < 1000 AND price < 300 and price > 200");
 	$response = Array('timestamp' => $result[0]['timestamp'], 'data_set' => $result);
 	echo json_encode($response);
 	exit();
