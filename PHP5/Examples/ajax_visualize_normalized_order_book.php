@@ -108,7 +108,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'
 						 }
 					});
 					
-					// Plain data points
+					// Plain data points (alternative)
 					/*$.each(data.data_set, function( index, value ) {
 					  	dps.push({x:parseFloat(value.price),y:parseFloat(value.volume)});
 					});*/						
