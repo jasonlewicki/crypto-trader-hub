@@ -41,22 +41,18 @@ for($i = 0; ($slice = $test_exchange_obj->step()) !== false; ++$i){
 	$mean 				= \CryptoTraderHub\Core\Statistics::mean($last_60);
 	$standard_deviation = \CryptoTraderHub\Core\Statistics::standardDeviation($last_60);
 			
-	if($slice['price'] > $mean + $standard_deviation*2){
-		
+	if($slice['price'] > $mean + $standard_deviation*2){		
 		$balance = $test_exchange_obj->balance();
 		
 		if($balance['btc'] > $sell_amount){
 			$test_exchange_obj->sell($sell_amount, $slice['price']);
-		}
-			
-	}else if($slice['price'] < $mean - $standard_deviation*2){
-				
+		}			
+	}else if($slice['price'] < $mean - $standard_deviation*2){				
 		$balance = $test_exchange_obj->balance();
 		
 		if($balance['usd'] >  ($buy_amount*$slice['price'] + ($buy_fee*$buy_amount*$slice['price']))){
 			$test_exchange_obj->buy($buy_amount, $slice['price']);
-		}
-		
+		}		
 	}
 	
 	if($i % 1000 == 0){
