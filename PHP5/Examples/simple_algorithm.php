@@ -55,6 +55,7 @@ for($i = 0; ($slice = $test_exchange_obj->step()) !== false; ++$i){
 		}		
 	}
 	
+	// Every 1000 ticks, show the status
 	if($i % 1000 == 0){
 		// The magic number is if you purchased BTC and held the entire time;		
 		$balance 		= $test_exchange_obj->balance();
