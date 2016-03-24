@@ -1,5 +1,6 @@
 <?php
 
+// Include config and autoloader files
 include dirname(__FILE__).'/../Configs/config.php';
 include CRYPTO_TRADER_HUB_ROOT.DIRECTORY_SEPARATOR.'autoload.php';
 
