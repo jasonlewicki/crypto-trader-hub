@@ -7,6 +7,7 @@ include CRYPTO_TRADER_HUB_ROOT.DIRECTORY_SEPARATOR.'autoload.php';
 // Create a Test exchange with the Historical data that we just inserted into the DB
 $test_exchange_obj = new \CryptoTraderHub\Exchanges\Test(APP_ROOT.'/Configs/historical_bitstampUSD.ini');
 
+// Variables
 $last_60 			= Array();
 $last_60_full 		= false;
 $buy_amount 		= 1;
