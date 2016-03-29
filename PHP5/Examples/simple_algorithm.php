@@ -40,6 +40,7 @@ for($i = 0; ($slice = $test_exchange_obj->step()) !== false; ++$i){
 		array_shift($last_60);	
 	}
 	
+	// Calculate the mean and standard deviation
 	$mean 				= \CryptoTraderHub\Core\Statistics::mean($last_60);
 	$standard_deviation = \CryptoTraderHub\Core\Statistics::standardDeviation($last_60);
 			
