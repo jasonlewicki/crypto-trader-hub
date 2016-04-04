@@ -43,7 +43,8 @@ for($i = 0; ($slice = $test_exchange_obj->step()) !== false; ++$i){
 	// Calculate the mean and standard deviation
 	$mean 				= \CryptoTraderHub\Core\Statistics::mean($last_60);
 	$standard_deviation = \CryptoTraderHub\Core\Statistics::standardDeviation($last_60);
-			
+	
+	// Logic for making trades		
 	if($slice['price'] > $mean + $standard_deviation*2){		
 		$balance = $test_exchange_obj->balance();
 		
