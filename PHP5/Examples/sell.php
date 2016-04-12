@@ -7,3 +7,6 @@ include CRYPTO_TRADER_HUB_ROOT.DIRECTORY_SEPARATOR.'autoload.php';
 $bitstamp_obj = new \CryptoTraderHub\Exchanges\Bitstamp(APP_ROOT.'/Configs/exchange_bitstamp.ini');
 
 // Sell
+$sell_amount = 20.00000000;
+$sell_price = 322.00;
+$bitstamp_obj->buy($sell_amount, $sell_price);
