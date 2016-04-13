@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * A losing algorithm that buys and sells based off the standard deviation of the price of the previous 60 ticks
+ */
+
 // Include config and autoloader files
 include dirname(__FILE__).'/../Configs/config.php';
 include CRYPTO_TRADER_HUB_ROOT.DIRECTORY_SEPARATOR.'autoload.php';
