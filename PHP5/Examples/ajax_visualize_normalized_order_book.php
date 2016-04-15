@@ -1,4 +1,9 @@
 <?php 
+
+/*
+ * Load this page on a web browser to view.
+ */ 
+
 // Detect if request was sent from JQuery or not
 if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
 		
