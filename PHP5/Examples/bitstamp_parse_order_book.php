@@ -18,7 +18,6 @@ $bids_sql = '';
 foreach($order_book['bids'] as $bid){		
 	$bids_sql .= "('".date('Y-m-d H:i:s', $timestamp)."','bid',{$bid[0]},{$bid[1]}),";					
 }
-
 $asks_sql = '';
 foreach($order_book['asks'] as $ask){		
 	$asks_sql .= "('".date('Y-m-d H:i:s', $timestamp)."','ask',{$ask[0]},{$ask[1]}),";					
