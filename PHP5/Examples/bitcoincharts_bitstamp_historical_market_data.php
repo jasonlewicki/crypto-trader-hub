@@ -12,5 +12,6 @@ $test_exchange_obj = new \CryptoTraderHub\Exchanges\Test(APP_ROOT.'/Configs/exch
 
 // Step through the market data
 for($i = 0; ($slice = $test_exchange_obj->step()) !== false; ++$i){
+	// Print out the data line by line
 	echo $i ." ".$slice['price']."\n";
 }
