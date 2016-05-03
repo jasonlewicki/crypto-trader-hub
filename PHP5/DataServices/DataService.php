@@ -10,6 +10,7 @@ Interface DataServiceInterface{
 
 Class DataService{
 
+	// DataService Constructor
 	public function __construct() {
 		// Start Database object
 		\CryptoTraderHub\Core\Database::initialize(DATABASE_INI);
