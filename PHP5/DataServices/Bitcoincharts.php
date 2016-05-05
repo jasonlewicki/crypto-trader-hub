@@ -39,7 +39,7 @@ class Bitcoincharts extends \CryptoTraderHub\DataServices\DataService implements
 	 * close 			- latest trade
 	 * previous_close 	- latest trade of previous day
 	 * volume 			- total trade volume of day in BTC
-	 * currency_volume	- total trade volume of day in currency
+	 * currency_volume	- total trade volume of day in currency 
 	 */
 	public function marketsData(){
 	
