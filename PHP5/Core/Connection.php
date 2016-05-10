@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * Class for making a cURL request to a service
+ */
+
 namespace CryptoTraderHub\Core;
 
 class Connection {
