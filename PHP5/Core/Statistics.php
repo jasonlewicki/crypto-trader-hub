@@ -4,7 +4,7 @@ namespace CryptoTraderHub\Core;
 
 class Statistics {
 	
-	// Calculate the standard deviation of the supplied array
+	// Calculate the standard deviation of the supplied array.
     public static function standardDeviation($values_arr){
 		$mean = array_sum($values_arr) / count($values_arr);
 	    $variance = 0.0;
