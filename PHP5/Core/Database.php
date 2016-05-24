@@ -17,6 +17,7 @@ class Database {
 	public static function initialize($database_ini) {
 		// If the connection has not been established, establish one		
 		if(!isset(self::$db_conn)){
+			// Parse the database ini file.
 			$settings 			= parse_ini_file($database_ini);;
 			self::$host 		= $settings['host'];
 			self::$username 	= $settings['username'];
