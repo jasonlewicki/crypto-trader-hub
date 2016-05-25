@@ -105,6 +105,7 @@ class Database {
 		}
 	}
 	
+	// Close the connection.
 	public static function closeConnection() {
 		return self::$db_conn->close();
 	}
