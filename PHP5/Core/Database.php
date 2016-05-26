@@ -29,10 +29,6 @@ class Database {
 		}
 	}
 	
-	public static function getDB() {
-		return self::$database;
-	}
-
 	public static function getRow($sql_statement) {
 		return self::executeQuery($sql_statement, 'single');
 	}
