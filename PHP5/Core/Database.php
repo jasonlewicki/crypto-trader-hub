@@ -29,6 +29,7 @@ class Database {
 		}
 	}
 	
+	// Get a single row.
 	public static function getRow($sql_statement) {
 		return self::executeQuery($sql_statement, 'single');
 	}
