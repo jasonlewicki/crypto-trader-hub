@@ -33,7 +33,8 @@ class Database {
 	public static function getRow($sql_statement) {
 		return self::executeQuery($sql_statement, 'single');
 	}
-
+	
+	// Get a multiple rows.
 	public static function getArray($sql_statement) {
 		return self::executeQuery($sql_statement, 'multi');
 	}
