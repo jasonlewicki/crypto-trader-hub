@@ -39,6 +39,7 @@ class Database {
 		return self::executeQuery($sql_statement, 'multi');
 	}
 
+	// Run the query
 	public static function runQuery($sql_statement) {
 		return self::executeQuery($sql_statement, 'none');
 	}
