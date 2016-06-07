@@ -44,6 +44,7 @@ class Database {
 		return self::executeQuery($sql_statement, 'none');
 	}
 
+	// Get the character set
 	public static function getCharSet() {
 		return self::$db_conn->character_set_name();
 	}
