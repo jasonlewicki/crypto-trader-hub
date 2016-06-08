@@ -49,6 +49,7 @@ class Database {
 		return self::$db_conn->character_set_name();
 	}
 
+	// Set the character set
 	public static function setCharSet($passed_string) {
 		return self::$db_conn->set_charset($passed_string);
 	}
