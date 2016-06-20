@@ -1,4 +1,5 @@
 <?php
+
 // Specify the extensions that may be loaded
 spl_autoload_extensions('.php');
 
